@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
+QT       += core gui network
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -32,7 +32,8 @@ SOURCES += \
     disconnect_message.cpp \
     client.cpp \
     client_list_message.cpp \
-    chat_message.cpp
+    chat_message.cpp \
+    read_user_name_from_file.cpp
 
 HEADERS += \
         mainwindow.hpp \
@@ -43,10 +44,12 @@ HEADERS += \
     disconnect_message.hpp \
     client.hpp \
     client_list_message.hpp \
-    chat_message.hpp
+    chat_message.hpp \
+    read_user_name_from_file.hpp
 
 FORMS += \
         mainwindow.ui
 
 DISTFILES += \
-    server_address.txt
+    server_address.txt \
+    user_name.txt

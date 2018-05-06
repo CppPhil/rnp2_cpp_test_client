@@ -12,10 +12,10 @@ MAKEFILE      = Makefile
 
 CC            = gcc
 CXX           = g++
-DEFINES       = -DQT_DEPRECATED_WARNINGS -DQT_QML_DEBUG -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB
+DEFINES       = -DQT_DEPRECATED_WARNINGS -DQT_QML_DEBUG -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_CORE_LIB
 CFLAGS        = -pipe -g -Wall -W -D_REENTRANT -fPIC $(DEFINES)
 CXXFLAGS      = -pipe -g -Wall -W -D_REENTRANT -fPIC $(DEFINES)
-INCPATH       = -I. -I../../Qt/5.10.0/gcc_64/include -I../../Qt/5.10.0/gcc_64/include/QtWidgets -I../../Qt/5.10.0/gcc_64/include/QtGui -I../../Qt/5.10.0/gcc_64/include/QtCore -I. -isystem /usr/include/libdrm -I. -I../../Qt/5.10.0/gcc_64/mkspecs/linux-g++
+INCPATH       = -I. -I../../Qt/5.10.0/gcc_64/include -I../../Qt/5.10.0/gcc_64/include/QtWidgets -I../../Qt/5.10.0/gcc_64/include/QtGui -I../../Qt/5.10.0/gcc_64/include/QtNetwork -I../../Qt/5.10.0/gcc_64/include/QtCore -I. -isystem /usr/include/libdrm -I. -I../../Qt/5.10.0/gcc_64/mkspecs/linux-g++
 QMAKE         = /home/phil/Qt/5.10.0/gcc_64/bin/qmake
 DEL_FILE      = rm -f
 CHK_DIR_EXISTS= test -d
@@ -38,7 +38,7 @@ DISTNAME      = rnp2_test_client1.0.0
 DISTDIR = /home/phil/QtProjects/rnp2_test_client/.tmp/rnp2_test_client1.0.0
 LINK          = g++
 LFLAGS        = -Wl,-rpath,/home/phil/Qt/5.10.0/gcc_64/lib
-LIBS          = $(SUBLIBS) -L/home/phil/Qt/5.10.0/gcc_64/lib -lQt5Widgets -lQt5Gui -lQt5Core -lGL -lpthread 
+LIBS          = $(SUBLIBS) -L/home/phil/Qt/5.10.0/gcc_64/lib -lQt5Widgets -lQt5Gui -lQt5Network -lQt5Core -lGL -lpthread 
 AR            = ar cqs
 RANLIB        = 
 SED           = sed
@@ -58,7 +58,8 @@ SOURCES       = main.cpp \
 		disconnect_message.cpp \
 		client.cpp \
 		client_list_message.cpp \
-		chat_message.cpp moc_mainwindow.cpp
+		chat_message.cpp \
+		read_user_name_from_file.cpp moc_mainwindow.cpp
 OBJECTS       = main.o \
 		mainwindow.o \
 		read_server_address_from_file.o \
@@ -68,8 +69,10 @@ OBJECTS       = main.o \
 		client.o \
 		client_list_message.o \
 		chat_message.o \
+		read_user_name_from_file.o \
 		moc_mainwindow.o
 DIST          = server_address.txt \
+		user_name.txt \
 		../../Qt/5.10.0/gcc_64/mkspecs/features/spec_pre.prf \
 		../../Qt/5.10.0/gcc_64/mkspecs/common/unix.conf \
 		../../Qt/5.10.0/gcc_64/mkspecs/common/linux.conf \
@@ -261,7 +264,8 @@ DIST          = server_address.txt \
 		disconnect_message.hpp \
 		client.hpp \
 		client_list_message.hpp \
-		chat_message.hpp main.cpp \
+		chat_message.hpp \
+		read_user_name_from_file.hpp main.cpp \
 		mainwindow.cpp \
 		read_server_address_from_file.cpp \
 		netstring.cpp \
@@ -269,7 +273,8 @@ DIST          = server_address.txt \
 		disconnect_message.cpp \
 		client.cpp \
 		client_list_message.cpp \
-		chat_message.cpp
+		chat_message.cpp \
+		read_user_name_from_file.cpp
 QMAKE_TARGET  = rnp2_test_client
 DESTDIR       = 
 TARGET        = rnp2_test_client
@@ -467,6 +472,7 @@ Makefile: rnp2_test_client.pro ../../Qt/5.10.0/gcc_64/mkspecs/linux-g++/qmake.co
 		rnp2_test_client.pro \
 		../../Qt/5.10.0/gcc_64/lib/libQt5Widgets.prl \
 		../../Qt/5.10.0/gcc_64/lib/libQt5Gui.prl \
+		../../Qt/5.10.0/gcc_64/lib/libQt5Network.prl \
 		../../Qt/5.10.0/gcc_64/lib/libQt5Core.prl
 	$(QMAKE) -o Makefile rnp2_test_client.pro -spec linux-g++ CONFIG+=debug CONFIG+=qml_debug
 ../../Qt/5.10.0/gcc_64/mkspecs/features/spec_pre.prf:
@@ -655,6 +661,7 @@ Makefile: rnp2_test_client.pro ../../Qt/5.10.0/gcc_64/mkspecs/linux-g++/qmake.co
 rnp2_test_client.pro:
 ../../Qt/5.10.0/gcc_64/lib/libQt5Widgets.prl:
 ../../Qt/5.10.0/gcc_64/lib/libQt5Gui.prl:
+../../Qt/5.10.0/gcc_64/lib/libQt5Network.prl:
 ../../Qt/5.10.0/gcc_64/lib/libQt5Core.prl:
 qmake: FORCE
 	@$(QMAKE) -o Makefile rnp2_test_client.pro -spec linux-g++ CONFIG+=debug CONFIG+=qml_debug
@@ -671,8 +678,8 @@ distdir: FORCE
 	@test -d $(DISTDIR) || mkdir -p $(DISTDIR)
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
 	$(COPY_FILE) --parents ../../Qt/5.10.0/gcc_64/mkspecs/features/data/dummy.cpp $(DISTDIR)/
-	$(COPY_FILE) --parents mainwindow.hpp read_server_address_from_file.hpp ports.hpp netstring.hpp connect_message.hpp disconnect_message.hpp client.hpp client_list_message.hpp chat_message.hpp $(DISTDIR)/
-	$(COPY_FILE) --parents main.cpp mainwindow.cpp read_server_address_from_file.cpp netstring.cpp connect_message.cpp disconnect_message.cpp client.cpp client_list_message.cpp chat_message.cpp $(DISTDIR)/
+	$(COPY_FILE) --parents mainwindow.hpp read_server_address_from_file.hpp ports.hpp netstring.hpp connect_message.hpp disconnect_message.hpp client.hpp client_list_message.hpp chat_message.hpp read_user_name_from_file.hpp $(DISTDIR)/
+	$(COPY_FILE) --parents main.cpp mainwindow.cpp read_server_address_from_file.cpp netstring.cpp connect_message.cpp disconnect_message.cpp client.cpp client_list_message.cpp chat_message.cpp read_user_name_from_file.cpp $(DISTDIR)/
 	$(COPY_FILE) --parents mainwindow.ui $(DISTDIR)/
 
 
@@ -708,9 +715,9 @@ moc_predefs.h: ../../Qt/5.10.0/gcc_64/mkspecs/features/data/dummy.cpp
 compiler_moc_header_make_all: moc_mainwindow.cpp
 compiler_moc_header_clean:
 	-$(DEL_FILE) moc_mainwindow.cpp
-moc_mainwindow.cpp: ../../Qt/5.10.0/gcc_64/include/QtCore/QString \
-		../../Qt/5.10.0/gcc_64/include/QtCore/qstring.h \
-		../../Qt/5.10.0/gcc_64/include/QtCore/qchar.h \
+moc_mainwindow.cpp: ../../Qt/5.10.0/gcc_64/include/QtNetwork/QAbstractSocket \
+		../../Qt/5.10.0/gcc_64/include/QtNetwork/qabstractsocket.h \
+		../../Qt/5.10.0/gcc_64/include/QtNetwork/qtnetworkglobal.h \
 		../../Qt/5.10.0/gcc_64/include/QtCore/qglobal.h \
 		../../Qt/5.10.0/gcc_64/include/QtCore/qconfig-bootstrapped.h \
 		../../Qt/5.10.0/gcc_64/include/QtCore/qconfig.h \
@@ -732,17 +739,21 @@ moc_mainwindow.cpp: ../../Qt/5.10.0/gcc_64/include/QtCore/QString \
 		../../Qt/5.10.0/gcc_64/include/QtCore/qmutex.h \
 		../../Qt/5.10.0/gcc_64/include/QtCore/qnumeric.h \
 		../../Qt/5.10.0/gcc_64/include/QtCore/qversiontagging.h \
+		../../Qt/5.10.0/gcc_64/include/QtNetwork/qtnetwork-config.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qiodevice.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qobject.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qobjectdefs.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qnamespace.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qobjectdefs_impl.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qstring.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qchar.h \
 		../../Qt/5.10.0/gcc_64/include/QtCore/qbytearray.h \
 		../../Qt/5.10.0/gcc_64/include/QtCore/qrefcount.h \
-		../../Qt/5.10.0/gcc_64/include/QtCore/qnamespace.h \
 		../../Qt/5.10.0/gcc_64/include/QtCore/qarraydata.h \
 		../../Qt/5.10.0/gcc_64/include/QtCore/qstringliteral.h \
 		../../Qt/5.10.0/gcc_64/include/QtCore/qstringalgorithms.h \
 		../../Qt/5.10.0/gcc_64/include/QtCore/qstringview.h \
 		../../Qt/5.10.0/gcc_64/include/QtCore/qstringbuilder.h \
-		ui_mainwindow.h \
-		../../Qt/5.10.0/gcc_64/include/QtCore/QVariant \
-		../../Qt/5.10.0/gcc_64/include/QtCore/qvariant.h \
 		../../Qt/5.10.0/gcc_64/include/QtCore/qlist.h \
 		../../Qt/5.10.0/gcc_64/include/QtCore/qalgorithms.h \
 		../../Qt/5.10.0/gcc_64/include/QtCore/qiterator.h \
@@ -752,21 +763,18 @@ moc_mainwindow.cpp: ../../Qt/5.10.0/gcc_64/include/QtCore/QString \
 		../../Qt/5.10.0/gcc_64/include/QtCore/qstringlist.h \
 		../../Qt/5.10.0/gcc_64/include/QtCore/qregexp.h \
 		../../Qt/5.10.0/gcc_64/include/QtCore/qstringmatcher.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qcoreevent.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qscopedpointer.h \
 		../../Qt/5.10.0/gcc_64/include/QtCore/qmetatype.h \
 		../../Qt/5.10.0/gcc_64/include/QtCore/qvarlengtharray.h \
 		../../Qt/5.10.0/gcc_64/include/QtCore/qcontainerfwd.h \
-		../../Qt/5.10.0/gcc_64/include/QtCore/qobjectdefs.h \
-		../../Qt/5.10.0/gcc_64/include/QtCore/qobjectdefs_impl.h \
-		../../Qt/5.10.0/gcc_64/include/QtCore/qmap.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qobject_impl.h \
 		../../Qt/5.10.0/gcc_64/include/QtCore/qdebug.h \
 		../../Qt/5.10.0/gcc_64/include/QtCore/qhash.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qmap.h \
 		../../Qt/5.10.0/gcc_64/include/QtCore/qtextstream.h \
-		../../Qt/5.10.0/gcc_64/include/QtCore/qiodevice.h \
-		../../Qt/5.10.0/gcc_64/include/QtCore/qobject.h \
-		../../Qt/5.10.0/gcc_64/include/QtCore/qcoreevent.h \
-		../../Qt/5.10.0/gcc_64/include/QtCore/qscopedpointer.h \
-		../../Qt/5.10.0/gcc_64/include/QtCore/qobject_impl.h \
 		../../Qt/5.10.0/gcc_64/include/QtCore/qlocale.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qvariant.h \
 		../../Qt/5.10.0/gcc_64/include/QtCore/qshareddata.h \
 		../../Qt/5.10.0/gcc_64/include/QtCore/qvector.h \
 		../../Qt/5.10.0/gcc_64/include/QtCore/qpoint.h \
@@ -774,6 +782,14 @@ moc_mainwindow.cpp: ../../Qt/5.10.0/gcc_64/include/QtCore/QString \
 		../../Qt/5.10.0/gcc_64/include/QtCore/qcontiguouscache.h \
 		../../Qt/5.10.0/gcc_64/include/QtCore/qsharedpointer.h \
 		../../Qt/5.10.0/gcc_64/include/QtCore/qsharedpointer_impl.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/QString \
+		../../Qt/5.10.0/gcc_64/include/QtNetwork/QTcpSocket \
+		../../Qt/5.10.0/gcc_64/include/QtNetwork/qtcpsocket.h \
+		../../Qt/5.10.0/gcc_64/include/QtNetwork/QUdpSocket \
+		../../Qt/5.10.0/gcc_64/include/QtNetwork/qudpsocket.h \
+		../../Qt/5.10.0/gcc_64/include/QtNetwork/qhostaddress.h \
+		ui_mainwindow.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/QVariant \
 		../../Qt/5.10.0/gcc_64/include/QtWidgets/QAction \
 		../../Qt/5.10.0/gcc_64/include/QtWidgets/qaction.h \
 		../../Qt/5.10.0/gcc_64/include/QtWidgets/qtwidgetsglobal.h \
@@ -883,7 +899,7 @@ moc_mainwindow.cpp: ../../Qt/5.10.0/gcc_64/include/QtCore/QString \
 		mainwindow.hpp \
 		moc_predefs.h \
 		../../Qt/5.10.0/gcc_64/bin/moc
-	/home/phil/Qt/5.10.0/gcc_64/bin/moc $(DEFINES) --include ./moc_predefs.h -I/home/phil/Qt/5.10.0/gcc_64/mkspecs/linux-g++ -I/home/phil/QtProjects/rnp2_test_client -I/home/phil/Qt/5.10.0/gcc_64/include -I/home/phil/Qt/5.10.0/gcc_64/include/QtWidgets -I/home/phil/Qt/5.10.0/gcc_64/include/QtGui -I/home/phil/Qt/5.10.0/gcc_64/include/QtCore -I/usr/include/c++/7 -I/usr/include/x86_64-linux-gnu/c++/7 -I/usr/include/c++/7/backward -I/usr/lib/gcc/x86_64-linux-gnu/7/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include mainwindow.hpp -o moc_mainwindow.cpp
+	/home/phil/Qt/5.10.0/gcc_64/bin/moc $(DEFINES) --include ./moc_predefs.h -I/home/phil/Qt/5.10.0/gcc_64/mkspecs/linux-g++ -I/home/phil/QtProjects/rnp2_test_client -I/home/phil/Qt/5.10.0/gcc_64/include -I/home/phil/Qt/5.10.0/gcc_64/include/QtWidgets -I/home/phil/Qt/5.10.0/gcc_64/include/QtGui -I/home/phil/Qt/5.10.0/gcc_64/include/QtNetwork -I/home/phil/Qt/5.10.0/gcc_64/include/QtCore -I/usr/include/c++/7 -I/usr/include/x86_64-linux-gnu/c++/7 -I/usr/include/c++/7/backward -I/usr/lib/gcc/x86_64-linux-gnu/7/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include mainwindow.hpp -o moc_mainwindow.cpp
 
 compiler_moc_objc_header_make_all:
 compiler_moc_objc_header_clean:
@@ -907,9 +923,9 @@ compiler_clean: compiler_moc_predefs_clean compiler_moc_header_clean compiler_ui
 ####### Compile
 
 main.o: main.cpp mainwindow.hpp \
-		../../Qt/5.10.0/gcc_64/include/QtCore/QString \
-		../../Qt/5.10.0/gcc_64/include/QtCore/qstring.h \
-		../../Qt/5.10.0/gcc_64/include/QtCore/qchar.h \
+		../../Qt/5.10.0/gcc_64/include/QtNetwork/QAbstractSocket \
+		../../Qt/5.10.0/gcc_64/include/QtNetwork/qabstractsocket.h \
+		../../Qt/5.10.0/gcc_64/include/QtNetwork/qtnetworkglobal.h \
 		../../Qt/5.10.0/gcc_64/include/QtCore/qglobal.h \
 		../../Qt/5.10.0/gcc_64/include/QtCore/qconfig-bootstrapped.h \
 		../../Qt/5.10.0/gcc_64/include/QtCore/qconfig.h \
@@ -931,17 +947,21 @@ main.o: main.cpp mainwindow.hpp \
 		../../Qt/5.10.0/gcc_64/include/QtCore/qmutex.h \
 		../../Qt/5.10.0/gcc_64/include/QtCore/qnumeric.h \
 		../../Qt/5.10.0/gcc_64/include/QtCore/qversiontagging.h \
+		../../Qt/5.10.0/gcc_64/include/QtNetwork/qtnetwork-config.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qiodevice.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qobject.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qobjectdefs.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qnamespace.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qobjectdefs_impl.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qstring.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qchar.h \
 		../../Qt/5.10.0/gcc_64/include/QtCore/qbytearray.h \
 		../../Qt/5.10.0/gcc_64/include/QtCore/qrefcount.h \
-		../../Qt/5.10.0/gcc_64/include/QtCore/qnamespace.h \
 		../../Qt/5.10.0/gcc_64/include/QtCore/qarraydata.h \
 		../../Qt/5.10.0/gcc_64/include/QtCore/qstringliteral.h \
 		../../Qt/5.10.0/gcc_64/include/QtCore/qstringalgorithms.h \
 		../../Qt/5.10.0/gcc_64/include/QtCore/qstringview.h \
 		../../Qt/5.10.0/gcc_64/include/QtCore/qstringbuilder.h \
-		ui_mainwindow.h \
-		../../Qt/5.10.0/gcc_64/include/QtCore/QVariant \
-		../../Qt/5.10.0/gcc_64/include/QtCore/qvariant.h \
 		../../Qt/5.10.0/gcc_64/include/QtCore/qlist.h \
 		../../Qt/5.10.0/gcc_64/include/QtCore/qalgorithms.h \
 		../../Qt/5.10.0/gcc_64/include/QtCore/qiterator.h \
@@ -951,21 +971,18 @@ main.o: main.cpp mainwindow.hpp \
 		../../Qt/5.10.0/gcc_64/include/QtCore/qstringlist.h \
 		../../Qt/5.10.0/gcc_64/include/QtCore/qregexp.h \
 		../../Qt/5.10.0/gcc_64/include/QtCore/qstringmatcher.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qcoreevent.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qscopedpointer.h \
 		../../Qt/5.10.0/gcc_64/include/QtCore/qmetatype.h \
 		../../Qt/5.10.0/gcc_64/include/QtCore/qvarlengtharray.h \
 		../../Qt/5.10.0/gcc_64/include/QtCore/qcontainerfwd.h \
-		../../Qt/5.10.0/gcc_64/include/QtCore/qobjectdefs.h \
-		../../Qt/5.10.0/gcc_64/include/QtCore/qobjectdefs_impl.h \
-		../../Qt/5.10.0/gcc_64/include/QtCore/qmap.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qobject_impl.h \
 		../../Qt/5.10.0/gcc_64/include/QtCore/qdebug.h \
 		../../Qt/5.10.0/gcc_64/include/QtCore/qhash.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qmap.h \
 		../../Qt/5.10.0/gcc_64/include/QtCore/qtextstream.h \
-		../../Qt/5.10.0/gcc_64/include/QtCore/qiodevice.h \
-		../../Qt/5.10.0/gcc_64/include/QtCore/qobject.h \
-		../../Qt/5.10.0/gcc_64/include/QtCore/qcoreevent.h \
-		../../Qt/5.10.0/gcc_64/include/QtCore/qscopedpointer.h \
-		../../Qt/5.10.0/gcc_64/include/QtCore/qobject_impl.h \
 		../../Qt/5.10.0/gcc_64/include/QtCore/qlocale.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qvariant.h \
 		../../Qt/5.10.0/gcc_64/include/QtCore/qshareddata.h \
 		../../Qt/5.10.0/gcc_64/include/QtCore/qvector.h \
 		../../Qt/5.10.0/gcc_64/include/QtCore/qpoint.h \
@@ -973,6 +990,14 @@ main.o: main.cpp mainwindow.hpp \
 		../../Qt/5.10.0/gcc_64/include/QtCore/qcontiguouscache.h \
 		../../Qt/5.10.0/gcc_64/include/QtCore/qsharedpointer.h \
 		../../Qt/5.10.0/gcc_64/include/QtCore/qsharedpointer_impl.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/QString \
+		../../Qt/5.10.0/gcc_64/include/QtNetwork/QTcpSocket \
+		../../Qt/5.10.0/gcc_64/include/QtNetwork/qtcpsocket.h \
+		../../Qt/5.10.0/gcc_64/include/QtNetwork/QUdpSocket \
+		../../Qt/5.10.0/gcc_64/include/QtNetwork/qudpsocket.h \
+		../../Qt/5.10.0/gcc_64/include/QtNetwork/qhostaddress.h \
+		ui_mainwindow.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/QVariant \
 		../../Qt/5.10.0/gcc_64/include/QtWidgets/QAction \
 		../../Qt/5.10.0/gcc_64/include/QtWidgets/qaction.h \
 		../../Qt/5.10.0/gcc_64/include/QtWidgets/qtwidgetsglobal.h \
@@ -1082,9 +1107,9 @@ main.o: main.cpp mainwindow.hpp \
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o main.o main.cpp
 
 mainwindow.o: mainwindow.cpp mainwindow.hpp \
-		../../Qt/5.10.0/gcc_64/include/QtCore/QString \
-		../../Qt/5.10.0/gcc_64/include/QtCore/qstring.h \
-		../../Qt/5.10.0/gcc_64/include/QtCore/qchar.h \
+		../../Qt/5.10.0/gcc_64/include/QtNetwork/QAbstractSocket \
+		../../Qt/5.10.0/gcc_64/include/QtNetwork/qabstractsocket.h \
+		../../Qt/5.10.0/gcc_64/include/QtNetwork/qtnetworkglobal.h \
 		../../Qt/5.10.0/gcc_64/include/QtCore/qglobal.h \
 		../../Qt/5.10.0/gcc_64/include/QtCore/qconfig-bootstrapped.h \
 		../../Qt/5.10.0/gcc_64/include/QtCore/qconfig.h \
@@ -1106,17 +1131,21 @@ mainwindow.o: mainwindow.cpp mainwindow.hpp \
 		../../Qt/5.10.0/gcc_64/include/QtCore/qmutex.h \
 		../../Qt/5.10.0/gcc_64/include/QtCore/qnumeric.h \
 		../../Qt/5.10.0/gcc_64/include/QtCore/qversiontagging.h \
+		../../Qt/5.10.0/gcc_64/include/QtNetwork/qtnetwork-config.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qiodevice.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qobject.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qobjectdefs.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qnamespace.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qobjectdefs_impl.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qstring.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qchar.h \
 		../../Qt/5.10.0/gcc_64/include/QtCore/qbytearray.h \
 		../../Qt/5.10.0/gcc_64/include/QtCore/qrefcount.h \
-		../../Qt/5.10.0/gcc_64/include/QtCore/qnamespace.h \
 		../../Qt/5.10.0/gcc_64/include/QtCore/qarraydata.h \
 		../../Qt/5.10.0/gcc_64/include/QtCore/qstringliteral.h \
 		../../Qt/5.10.0/gcc_64/include/QtCore/qstringalgorithms.h \
 		../../Qt/5.10.0/gcc_64/include/QtCore/qstringview.h \
 		../../Qt/5.10.0/gcc_64/include/QtCore/qstringbuilder.h \
-		ui_mainwindow.h \
-		../../Qt/5.10.0/gcc_64/include/QtCore/QVariant \
-		../../Qt/5.10.0/gcc_64/include/QtCore/qvariant.h \
 		../../Qt/5.10.0/gcc_64/include/QtCore/qlist.h \
 		../../Qt/5.10.0/gcc_64/include/QtCore/qalgorithms.h \
 		../../Qt/5.10.0/gcc_64/include/QtCore/qiterator.h \
@@ -1126,21 +1155,18 @@ mainwindow.o: mainwindow.cpp mainwindow.hpp \
 		../../Qt/5.10.0/gcc_64/include/QtCore/qstringlist.h \
 		../../Qt/5.10.0/gcc_64/include/QtCore/qregexp.h \
 		../../Qt/5.10.0/gcc_64/include/QtCore/qstringmatcher.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qcoreevent.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qscopedpointer.h \
 		../../Qt/5.10.0/gcc_64/include/QtCore/qmetatype.h \
 		../../Qt/5.10.0/gcc_64/include/QtCore/qvarlengtharray.h \
 		../../Qt/5.10.0/gcc_64/include/QtCore/qcontainerfwd.h \
-		../../Qt/5.10.0/gcc_64/include/QtCore/qobjectdefs.h \
-		../../Qt/5.10.0/gcc_64/include/QtCore/qobjectdefs_impl.h \
-		../../Qt/5.10.0/gcc_64/include/QtCore/qmap.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qobject_impl.h \
 		../../Qt/5.10.0/gcc_64/include/QtCore/qdebug.h \
 		../../Qt/5.10.0/gcc_64/include/QtCore/qhash.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qmap.h \
 		../../Qt/5.10.0/gcc_64/include/QtCore/qtextstream.h \
-		../../Qt/5.10.0/gcc_64/include/QtCore/qiodevice.h \
-		../../Qt/5.10.0/gcc_64/include/QtCore/qobject.h \
-		../../Qt/5.10.0/gcc_64/include/QtCore/qcoreevent.h \
-		../../Qt/5.10.0/gcc_64/include/QtCore/qscopedpointer.h \
-		../../Qt/5.10.0/gcc_64/include/QtCore/qobject_impl.h \
 		../../Qt/5.10.0/gcc_64/include/QtCore/qlocale.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qvariant.h \
 		../../Qt/5.10.0/gcc_64/include/QtCore/qshareddata.h \
 		../../Qt/5.10.0/gcc_64/include/QtCore/qvector.h \
 		../../Qt/5.10.0/gcc_64/include/QtCore/qpoint.h \
@@ -1148,6 +1174,14 @@ mainwindow.o: mainwindow.cpp mainwindow.hpp \
 		../../Qt/5.10.0/gcc_64/include/QtCore/qcontiguouscache.h \
 		../../Qt/5.10.0/gcc_64/include/QtCore/qsharedpointer.h \
 		../../Qt/5.10.0/gcc_64/include/QtCore/qsharedpointer_impl.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/QString \
+		../../Qt/5.10.0/gcc_64/include/QtNetwork/QTcpSocket \
+		../../Qt/5.10.0/gcc_64/include/QtNetwork/qtcpsocket.h \
+		../../Qt/5.10.0/gcc_64/include/QtNetwork/QUdpSocket \
+		../../Qt/5.10.0/gcc_64/include/QtNetwork/qudpsocket.h \
+		../../Qt/5.10.0/gcc_64/include/QtNetwork/qhostaddress.h \
+		ui_mainwindow.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/QVariant \
 		../../Qt/5.10.0/gcc_64/include/QtWidgets/QAction \
 		../../Qt/5.10.0/gcc_64/include/QtWidgets/qaction.h \
 		../../Qt/5.10.0/gcc_64/include/QtWidgets/qtwidgetsglobal.h \
@@ -1254,11 +1288,12 @@ mainwindow.o: mainwindow.cpp mainwindow.hpp \
 		../../Qt/5.10.0/gcc_64/include/QtWidgets/qtoolbar.h \
 		../../Qt/5.10.0/gcc_64/include/QtWidgets/QVBoxLayout \
 		../../Qt/5.10.0/gcc_64/include/QtWidgets/QWidget \
+		ports.hpp \
 		read_server_address_from_file.hpp \
+		read_user_name_from_file.hpp \
 		../../Qt/5.10.0/gcc_64/include/QtWidgets/QMessageBox \
 		../../Qt/5.10.0/gcc_64/include/QtWidgets/qmessagebox.h \
-		../../Qt/5.10.0/gcc_64/include/QtWidgets/qdialog.h \
-		chat_message.hpp
+		../../Qt/5.10.0/gcc_64/include/QtWidgets/qdialog.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o mainwindow.o mainwindow.cpp
 
 read_server_address_from_file.o: read_server_address_from_file.cpp read_server_address_from_file.hpp
@@ -1480,6 +1515,9 @@ chat_message.o: chat_message.cpp chat_message.hpp \
 		../../Qt/5.10.0/gcc_64/include/QtCore/qiterator.h \
 		../../Qt/5.10.0/gcc_64/include/QtCore/qpair.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o chat_message.o chat_message.cpp
+
+read_user_name_from_file.o: read_user_name_from_file.cpp read_user_name_from_file.hpp
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o read_user_name_from_file.o read_user_name_from_file.cpp
 
 moc_mainwindow.o: moc_mainwindow.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_mainwindow.o moc_mainwindow.cpp
