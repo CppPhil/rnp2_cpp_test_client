@@ -32,6 +32,7 @@ MainWindow::MainWindow(QWidget* parent)
         msgB.setText("could not read server address from file");
         msgB.exec();
         close();
+        return;
     }
     m_serverAddress = QString::fromStdString(*opt);
 
@@ -41,6 +42,7 @@ MainWindow::MainWindow(QWidget* parent)
         msgB.setText("could not read user name from file");
         msgB.exec();
         close();
+        return;
     }
     m_userName = QString::fromStdString(*opt);
 
@@ -113,9 +115,7 @@ void MainWindow::onTcpReadyRead()
     const boost::optional<Netstring> netStringOpt{Netstring::fromNetStringData(
         dataRead.data(), static_cast<std::size_t>(dataRead.size()))};
 
-    if (!netStringOpt) {
-        return;
-    }
+    if (!netStringOpt) { return; }
 
     const boost::optional<ClientListMessage> clientListMessageOpt{
         ClientListMessage::fromJson(
@@ -143,31 +143,25 @@ void MainWindow::onUdpReadyRead()
             Netstring::fromNetStringData(
                 byteArray.data(), static_cast<std::size_t>(byteArray.size()))};
 
-        if (!netStringOpt) {
-            continue;
-        }
+        if (!netStringOpt) { continue; }
 
         const boost::optional<ChatMessage> chatMessageOpt{
             ChatMessage::fromJson(QString::fromStdString(netStringOpt->str()))};
 
-        if (!chatMessageOpt) {
-            continue;
-        }
+        if (!chatMessageOpt) { continue; }
 
         if (ui.chateMessagesPlainTextEdit->toPlainText().isEmpty()) {
             ui.chateMessagesPlainTextEdit->setPlainText(
                 chatMessageOpt->senderName() + " ("
                 + datagram.senderAddress().toString()
-                + "):"
-                + chatMessageOpt->message());
+                + "):" + chatMessageOpt->message());
         }
         else {
             ui.chateMessagesPlainTextEdit->setPlainText(
                 ui.chateMessagesPlainTextEdit->toPlainText()
                 += ("\n" + chatMessageOpt->senderName() + " ("
                     + datagram.senderAddress().toString()
-                    + "):"
-                    + chatMessageOpt->message()));
+                    + "):" + chatMessageOpt->message()));
         }
 
         ui.chateMessagesPlainTextEdit->moveCursor(
