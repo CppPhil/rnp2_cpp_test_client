@@ -113,7 +113,9 @@ void MainWindow::onTcpReadyRead()
     const boost::optional<Netstring> netStringOpt{Netstring::fromNetStringData(
         dataRead.data(), static_cast<std::size_t>(dataRead.size()))};
 
-    if (!netStringOpt) { return; }
+    if (!netStringOpt) {
+        return;
+    }
 
     const boost::optional<ClientListMessage> clientListMessageOpt{
         ClientListMessage::fromJson(
@@ -141,18 +143,23 @@ void MainWindow::onUdpReadyRead()
             Netstring::fromNetStringData(
                 byteArray.data(), static_cast<std::size_t>(byteArray.size()))};
 
-        if (!netStringOpt) { continue; }
+        if (!netStringOpt) {
+            continue;
+        }
 
         const boost::optional<ChatMessage> chatMessageOpt{
             ChatMessage::fromJson(QString::fromStdString(netStringOpt->str()))};
 
-        if (!chatMessageOpt) { continue; }
+        if (!chatMessageOpt) {
+            continue;
+        }
 
         if (ui.chateMessagesPlainTextEdit->toPlainText().isEmpty()) {
             ui.chateMessagesPlainTextEdit->setPlainText(
                 chatMessageOpt->senderName() + " ("
                 + datagram.senderAddress().toString()
-                + "):" + chatMessageOpt->message());
+                + "):"
+                + chatMessageOpt->message());
         }
         else {
             ui.chateMessagesPlainTextEdit->setPlainText(
@@ -160,7 +167,7 @@ void MainWindow::onUdpReadyRead()
                 += ("\n" + chatMessageOpt->senderName() + " ("
                     + datagram.senderAddress().toString()
                     + "):"
-                    + chatMessageOpt->message());
+                    + chatMessageOpt->message()));
         }
 
         ui.chateMessagesPlainTextEdit->moveCursor(
