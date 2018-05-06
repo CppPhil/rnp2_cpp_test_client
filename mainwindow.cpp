@@ -11,7 +11,10 @@
 #include <QHostAddress>
 #include <QMessageBox>
 #include <QNetworkDatagram>
+#include <QNetworkInterface>
+#include <algorithm>
 #include <boost/lexical_cast.hpp>
+#include <vector>
 
 MainWindow::MainWindow(QWidget* parent)
     : QMainWindow(parent)
@@ -110,7 +113,9 @@ void MainWindow::onTcpReadyRead()
     const boost::optional<Netstring> netStringOpt{Netstring::fromNetStringData(
         dataRead.data(), static_cast<std::size_t>(dataRead.size()))};
 
-    if (!netStringOpt) { return; }
+    if (!netStringOpt) {
+        return;
+    }
 
     const boost::optional<ClientListMessage> clientListMessageOpt{
         ClientListMessage::fromJson(
@@ -137,12 +142,16 @@ void MainWindow::onUdpReadyRead()
             Netstring::fromNetStringData(
                 byteArray.data(), static_cast<std::size_t>(byteArray.size()))};
 
-        if (!netStringOpt) { continue; }
+        if (!netStringOpt) {
+            continue;
+        }
 
         const boost::optional<ChatMessage> chatMessageOpt{
             ChatMessage::fromJson(QString::fromStdString(netStringOpt->str()))};
 
-        if (!chatMessageOpt) { continue; }
+        if (!chatMessageOpt) {
+            continue;
+        }
 
         if (ui.chateMessagesPlainTextEdit->toPlainText().isEmpty()) {
             ui.chateMessagesPlainTextEdit->setPlainText(
@@ -202,7 +211,30 @@ void MainWindow::disconnectFromTcpServer()
 
 void MainWindow::bindUdpSocket()
 {
-    m_udpSocket.bind(QHostAddress{m_serverAddress}, UDP_LISTEN_PORT);
+    QList<QHostAddress>       addresses{QNetworkInterface::allAddresses()};
+    std::vector<QHostAddress> v(
+        std::make_move_iterator(addresses.begin()),
+        std::make_move_iterator(addresses.end()));
+    addresses.clear();
+    v.erase(
+        std::remove_if(
+            v.begin(),
+            v.end(),
+            [](const QHostAddress& addr) {
+                return addr.protocol() != QAbstractSocket::IPv4Protocol
+                       || addr.isLoopback() || addr.isMulticast()
+                       || addr.isNull();
+            }),
+        v.end());
+
+    if (v.empty()) {
+        QMessageBox m;
+        m.setText("no addresses in bindUdpSocket.");
+        m.exec();
+        return;
+    }
+
+    m_udpSocket.bind(v.front(), UDP_LISTEN_PORT);
 }
 
 void MainWindow::closeEvent(QCloseEvent* event)
