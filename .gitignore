@@ -190,3 +190,8 @@ $RECYCLE.BIN/
 
 # End of https://www.gitignore.io/api/c,qt,qml,c++,linux,cmake,windows,qtcreator
 
+### binary ###
+rnp2_test_client
+
+
+

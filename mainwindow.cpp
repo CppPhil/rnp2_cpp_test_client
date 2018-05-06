@@ -125,6 +125,7 @@ void MainWindow::onTcpReadyRead()
         QString strToShowInGui{""};
         for (const Client& client : m_clientList) {
             strToShowInGui += client.userName();
+            strToShowInGui += " (" + client.ip() + ")";
             strToShowInGui += "\n";
         }
         ui.clientListPlainTextEdit->setPlainText(strToShowInGui);
@@ -155,7 +156,10 @@ void MainWindow::onUdpReadyRead()
 
         if (ui.chateMessagesPlainTextEdit->toPlainText().isEmpty()) {
             ui.chateMessagesPlainTextEdit->setPlainText(
-                chatMessageOpt->senderName() + ":" + chatMessageOpt->message());
+                chatMessageOpt->senderName() + " ("
+                + datagram.senderAddress().toString()
+                + "):"
+                + chatMessageOpt->message());
         }
         else {
             ui.chateMessagesPlainTextEdit->setPlainText(
