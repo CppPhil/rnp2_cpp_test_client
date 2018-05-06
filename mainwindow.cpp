@@ -163,6 +163,9 @@ void MainWindow::onUdpReadyRead()
                 += ("\n" + chatMessageOpt->senderName() + ":"
                     + chatMessageOpt->message()));
         }
+
+        ui.chateMessagesPlainTextEdit->moveCursor(
+            QTextCursor::End, QTextCursor::MoveAnchor);
     }
 }
 
