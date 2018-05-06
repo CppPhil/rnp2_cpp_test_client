@@ -202,7 +202,7 @@ void MainWindow::disconnectFromTcpServer()
 
 void MainWindow::bindUdpSocket()
 {
-    m_udpSocket.bind(QHostAddress::LocalHost, UDP_LISTEN_PORT);
+    m_udpSocket.bind(QHostAddress{m_serverAddress}, UDP_LISTEN_PORT);
 }
 
 void MainWindow::closeEvent(QCloseEvent* event)
