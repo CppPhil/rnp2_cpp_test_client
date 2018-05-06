@@ -144,10 +144,16 @@ void MainWindow::onUdpReadyRead()
 
         if (!chatMessageOpt) { continue; }
 
-        ui.chateMessagesPlainTextEdit->setPlainText(
-            ui.chateMessagesPlainTextEdit->toPlainText()
-            += ("\n" + chatMessageOpt->senderName() + ":"
-                + chatMessageOpt->message()));
+        if (ui.chateMessagesPlainTextEdit->toPlainText().isEmpty()) {
+            ui.chateMessagesPlainTextEdit->setPlainText(
+                chatMessageOpt->senderName() + ":" + chatMessageOpt->message());
+        }
+        else {
+            ui.chateMessagesPlainTextEdit->setPlainText(
+                ui.chateMessagesPlainTextEdit->toPlainText()
+                += ("\n" + chatMessageOpt->senderName() + ":"
+                    + chatMessageOpt->message()));
+        }
     }
 }
 
@@ -156,8 +162,10 @@ void MainWindow::onSendMessagePushButtonClick()
     // send chat message to all clients
 
     // get the text
-    const QString     messageToSend{ui.sendMessagePlainTextEdit->toPlainText()};
-    const Netstring   netstring{messageToSend.toStdString()};
+    const QString messageAsInGui{ui.sendMessagePlainTextEdit->toPlainText()};
+    const ChatMessage chatMessage{messageAsInGui, m_userName};
+    const QString     chatMessageJson{chatMessage.asJson()};
+    const Netstring   netstring{chatMessageJson.toStdString()};
     const std::string messageToSendStdString{
         boost::lexical_cast<std::string>(netstring)};
 

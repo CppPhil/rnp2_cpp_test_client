@@ -28,7 +28,7 @@ boost::optional<Client> Client::fromJson(const QString& json)
 }
 
 const QString& Client::ip() const { return m_ip; }
-const QString& Client::userName() const { return m_ip; }
+const QString& Client::userName() const { return m_userName; }
 
 QString Client::asJson() const
 {
