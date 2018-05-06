@@ -27,13 +27,23 @@ SOURCES += \
         main.cpp \
         mainwindow.cpp \
     read_server_address_from_file.cpp \
-    netstring.cpp
+    netstring.cpp \
+    connect_message.cpp \
+    disconnect_message.cpp \
+    client.cpp \
+    client_list_message.cpp \
+    chat_message.cpp
 
 HEADERS += \
         mainwindow.hpp \
     read_server_address_from_file.hpp \
     ports.hpp \
-    netstring.hpp
+    netstring.hpp \
+    connect_message.hpp \
+    disconnect_message.hpp \
+    client.hpp \
+    client_list_message.hpp \
+    chat_message.hpp
 
 FORMS += \
         mainwindow.ui

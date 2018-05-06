@@ -3,8 +3,6 @@
 #include <QMessageBox>
 #include <cstdlib>
 
-#include "netstring.hpp"
-
 MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), m_serverAddress{}
 {
     ui.setupUi(this);

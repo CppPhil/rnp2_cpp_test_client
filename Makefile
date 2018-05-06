@@ -53,11 +53,21 @@ OBJECTS_DIR   = ./
 SOURCES       = main.cpp \
 		mainwindow.cpp \
 		read_server_address_from_file.cpp \
-		netstring.cpp moc_mainwindow.cpp
+		netstring.cpp \
+		connect_message.cpp \
+		disconnect_message.cpp \
+		client.cpp \
+		client_list_message.cpp \
+		chat_message.cpp moc_mainwindow.cpp
 OBJECTS       = main.o \
 		mainwindow.o \
 		read_server_address_from_file.o \
 		netstring.o \
+		connect_message.o \
+		disconnect_message.o \
+		client.o \
+		client_list_message.o \
+		chat_message.o \
 		moc_mainwindow.o
 DIST          = server_address.txt \
 		../../Qt/5.10.0/gcc_64/mkspecs/features/spec_pre.prf \
@@ -246,10 +256,20 @@ DIST          = server_address.txt \
 		rnp2_test_client.pro mainwindow.hpp \
 		read_server_address_from_file.hpp \
 		ports.hpp \
-		netstring.hpp main.cpp \
+		netstring.hpp \
+		connect_message.hpp \
+		disconnect_message.hpp \
+		client.hpp \
+		client_list_message.hpp \
+		chat_message.hpp main.cpp \
 		mainwindow.cpp \
 		read_server_address_from_file.cpp \
-		netstring.cpp
+		netstring.cpp \
+		connect_message.cpp \
+		disconnect_message.cpp \
+		client.cpp \
+		client_list_message.cpp \
+		chat_message.cpp
 QMAKE_TARGET  = rnp2_test_client
 DESTDIR       = 
 TARGET        = rnp2_test_client
@@ -651,8 +671,8 @@ distdir: FORCE
 	@test -d $(DISTDIR) || mkdir -p $(DISTDIR)
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
 	$(COPY_FILE) --parents ../../Qt/5.10.0/gcc_64/mkspecs/features/data/dummy.cpp $(DISTDIR)/
-	$(COPY_FILE) --parents mainwindow.hpp read_server_address_from_file.hpp ports.hpp netstring.hpp $(DISTDIR)/
-	$(COPY_FILE) --parents main.cpp mainwindow.cpp read_server_address_from_file.cpp netstring.cpp $(DISTDIR)/
+	$(COPY_FILE) --parents mainwindow.hpp read_server_address_from_file.hpp ports.hpp netstring.hpp connect_message.hpp disconnect_message.hpp client.hpp client_list_message.hpp chat_message.hpp $(DISTDIR)/
+	$(COPY_FILE) --parents main.cpp mainwindow.cpp read_server_address_from_file.cpp netstring.cpp connect_message.cpp disconnect_message.cpp client.cpp client_list_message.cpp chat_message.cpp $(DISTDIR)/
 	$(COPY_FILE) --parents mainwindow.ui $(DISTDIR)/
 
 
@@ -1238,7 +1258,7 @@ mainwindow.o: mainwindow.cpp mainwindow.hpp \
 		../../Qt/5.10.0/gcc_64/include/QtWidgets/QMessageBox \
 		../../Qt/5.10.0/gcc_64/include/QtWidgets/qmessagebox.h \
 		../../Qt/5.10.0/gcc_64/include/QtWidgets/qdialog.h \
-		netstring.hpp
+		chat_message.hpp
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o mainwindow.o mainwindow.cpp
 
 read_server_address_from_file.o: read_server_address_from_file.cpp read_server_address_from_file.hpp
@@ -1246,6 +1266,220 @@ read_server_address_from_file.o: read_server_address_from_file.cpp read_server_a
 
 netstring.o: netstring.cpp netstring.hpp
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o netstring.o netstring.cpp
+
+connect_message.o: connect_message.cpp connect_message.hpp \
+		../../Qt/5.10.0/gcc_64/include/QtCore/QString \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qstring.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qchar.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qglobal.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qconfig-bootstrapped.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qconfig.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qtcore-config.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qsystemdetection.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qprocessordetection.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qcompilerdetection.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qtypeinfo.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qsysinfo.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qlogging.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qflags.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qatomic.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qbasicatomic.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qatomic_bootstrap.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qgenericatomic.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qatomic_cxx11.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qatomic_msvc.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qglobalstatic.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qmutex.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qnumeric.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qversiontagging.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qbytearray.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qrefcount.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qnamespace.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qarraydata.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qstringliteral.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qstringalgorithms.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qstringview.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qstringbuilder.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/QJsonDocument \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qjsondocument.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qjsonvalue.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/QJsonObject \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qjsonobject.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qiterator.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qpair.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o connect_message.o connect_message.cpp
+
+disconnect_message.o: disconnect_message.cpp disconnect_message.hpp \
+		../../Qt/5.10.0/gcc_64/include/QtCore/QString \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qstring.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qchar.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qglobal.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qconfig-bootstrapped.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qconfig.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qtcore-config.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qsystemdetection.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qprocessordetection.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qcompilerdetection.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qtypeinfo.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qsysinfo.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qlogging.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qflags.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qatomic.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qbasicatomic.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qatomic_bootstrap.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qgenericatomic.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qatomic_cxx11.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qatomic_msvc.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qglobalstatic.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qmutex.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qnumeric.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qversiontagging.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qbytearray.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qrefcount.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qnamespace.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qarraydata.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qstringliteral.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qstringalgorithms.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qstringview.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qstringbuilder.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/QJsonDocument \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qjsondocument.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qjsonvalue.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/QJsonObject \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qjsonobject.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qiterator.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qpair.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o disconnect_message.o disconnect_message.cpp
+
+client.o: client.cpp client.hpp \
+		../../Qt/5.10.0/gcc_64/include/QtCore/QString \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qstring.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qchar.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qglobal.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qconfig-bootstrapped.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qconfig.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qtcore-config.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qsystemdetection.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qprocessordetection.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qcompilerdetection.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qtypeinfo.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qsysinfo.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qlogging.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qflags.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qatomic.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qbasicatomic.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qatomic_bootstrap.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qgenericatomic.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qatomic_cxx11.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qatomic_msvc.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qglobalstatic.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qmutex.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qnumeric.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qversiontagging.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qbytearray.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qrefcount.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qnamespace.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qarraydata.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qstringliteral.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qstringalgorithms.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qstringview.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qstringbuilder.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/QJsonDocument \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qjsondocument.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qjsonvalue.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/QJsonObject \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qjsonobject.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qiterator.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qpair.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o client.o client.cpp
+
+client_list_message.o: client_list_message.cpp client_list_message.hpp \
+		client.hpp \
+		../../Qt/5.10.0/gcc_64/include/QtCore/QString \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qstring.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qchar.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qglobal.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qconfig-bootstrapped.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qconfig.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qtcore-config.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qsystemdetection.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qprocessordetection.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qcompilerdetection.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qtypeinfo.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qsysinfo.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qlogging.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qflags.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qatomic.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qbasicatomic.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qatomic_bootstrap.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qgenericatomic.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qatomic_cxx11.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qatomic_msvc.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qglobalstatic.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qmutex.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qnumeric.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qversiontagging.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qbytearray.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qrefcount.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qnamespace.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qarraydata.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qstringliteral.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qstringalgorithms.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qstringview.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qstringbuilder.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/QJsonArray \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qjsonarray.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qjsonvalue.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qiterator.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/QJsonDocument \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qjsondocument.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/QJsonObject \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qjsonobject.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qpair.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/QJsonValue
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o client_list_message.o client_list_message.cpp
+
+chat_message.o: chat_message.cpp chat_message.hpp \
+		../../Qt/5.10.0/gcc_64/include/QtCore/QString \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qstring.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qchar.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qglobal.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qconfig-bootstrapped.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qconfig.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qtcore-config.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qsystemdetection.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qprocessordetection.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qcompilerdetection.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qtypeinfo.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qsysinfo.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qlogging.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qflags.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qatomic.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qbasicatomic.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qatomic_bootstrap.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qgenericatomic.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qatomic_cxx11.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qatomic_msvc.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qglobalstatic.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qmutex.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qnumeric.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qversiontagging.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qbytearray.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qrefcount.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qnamespace.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qarraydata.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qstringliteral.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qstringalgorithms.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qstringview.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qstringbuilder.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/QJsonDocument \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qjsondocument.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qjsonvalue.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/QJsonObject \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qjsonobject.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qiterator.h \
+		../../Qt/5.10.0/gcc_64/include/QtCore/qpair.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o chat_message.o chat_message.cpp
 
 moc_mainwindow.o: moc_mainwindow.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_mainwindow.o moc_mainwindow.cpp
