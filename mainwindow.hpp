@@ -1,5 +1,6 @@
 #ifndef MAINWINDOW_HPP
 #define MAINWINDOW_HPP
+#include <QString>
 
 #include "ui_mainwindow.h"
 
@@ -11,6 +12,7 @@ public:
 
 private:
     Ui::MainWindow ui;
+    QString        m_serverAddress;
 };
 
 #endif // MAINWINDOW_HPP

@@ -25,10 +25,18 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
         main.cpp \
-        mainwindow.cpp
+        mainwindow.cpp \
+    read_server_address_from_file.cpp \
+    netstring.cpp
 
 HEADERS += \
-        mainwindow.hpp
+        mainwindow.hpp \
+    read_server_address_from_file.hpp \
+    ports.hpp \
+    netstring.hpp
 
 FORMS += \
         mainwindow.ui
+
+DISTFILES += \
+    server_address.txt

@@ -1,0 +1,7 @@
+#ifndef PORTS_HPP
+#define PORTS_HPP
+
+#define TCP_SERVER_PORT 65534U
+#define UDP_LISTEN_PORT 65535U
+
+#endif // PORTS_HPP
