@@ -99,6 +99,7 @@ void MainWindow::onTcpDisconnected()
     // exit the application.
     QMessageBox msgB;
     msgB.setText("Lost TCP connection - shutting down.");
+    msgB.exec();
     close();
 }
 
