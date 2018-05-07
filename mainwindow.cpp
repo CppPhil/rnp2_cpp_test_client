@@ -7,6 +7,7 @@
 #include "ports.hpp"
 #include "read_server_address_from_file.hpp"
 #include "read_user_name_from_file.hpp"
+#include "timestamp.hpp"
 #include <QByteArray>
 #include <QHostAddress>
 #include <QMessageBox>
@@ -152,15 +153,15 @@ void MainWindow::onUdpReadyRead()
 
         if (ui.chateMessagesPlainTextEdit->toPlainText().isEmpty()) {
             ui.chateMessagesPlainTextEdit->setPlainText(
-                chatMessageOpt->senderName() + " ("
+                timestamp() + " " + chatMessageOpt->senderName() + " ("
                 + datagram.senderAddress().toString()
                 + "):" + chatMessageOpt->message());
         }
         else {
             ui.chateMessagesPlainTextEdit->setPlainText(
                 ui.chateMessagesPlainTextEdit->toPlainText()
-                += ("\n" + chatMessageOpt->senderName() + " ("
-                    + datagram.senderAddress().toString()
+                += ("\n" + timestamp() + " " + chatMessageOpt->senderName()
+                    + " (" + datagram.senderAddress().toString()
                     + "):" + chatMessageOpt->message()));
         }
 

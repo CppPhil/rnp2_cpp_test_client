@@ -33,7 +33,8 @@ SOURCES += \
     client.cpp \
     client_list_message.cpp \
     chat_message.cpp \
-    read_user_name_from_file.cpp
+    read_user_name_from_file.cpp \
+    timestamp.cpp
 
 HEADERS += \
         mainwindow.hpp \
@@ -45,7 +46,8 @@ HEADERS += \
     client.hpp \
     client_list_message.hpp \
     chat_message.hpp \
-    read_user_name_from_file.hpp
+    read_user_name_from_file.hpp \
+    timestamp.hpp
 
 FORMS += \
         mainwindow.ui
